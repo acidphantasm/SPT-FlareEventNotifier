@@ -3,7 +3,7 @@ using JetBrains.Annotations;
 
 namespace Terkoiz.FlareEventNotifier
 {
-    [BepInPlugin("com.terkoiz.flareeventnotifier", "Terkoiz.FlareEventNotifier", "1.0.4")]
+    [BepInPlugin("com.terkoiz.flareeventnotifier", "Terkoiz.FlareEventNotifier", "1.0.5")]
     public class FlareEventNotifierPlugin : BaseUnityPlugin
     {
         [UsedImplicitly]
