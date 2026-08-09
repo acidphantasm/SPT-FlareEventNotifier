@@ -9,29 +9,28 @@ using EFT.InventoryLogic;
 using HarmonyLib;
 using UnityEngine;
 
-// ReSharper disable ArrangeAccessorOwnerBody
-
 namespace Terkoiz.FlareEventNotifier
 {
+    using EFT.GlobalEvents;
+
     public class FlareEventHookPatch : ModulePatch
     {
         protected override MethodBase GetTargetMethod()
         {
-            var targetType = typeof(AbstractGame).Assembly.GetTypes().SingleOrDefault(t => t.GetProperty("ZoneEventType") != null)
-                             ?? throw new Exception("Could not locate target type");
+            var targetType = typeof(AbstractGame).Assembly.GetTypes().SingleOrDefault(t => t.GetProperty("ZoneEventType") != null) ?? throw new Exception("Could not locate target type");
 
             return AccessTools.DeclaredMethod(targetType, "Invoke");
         }
 
         [PatchPrefix]
-        public static void PatchPrefix(FlareEventType flareType, EZoneEventTypeEnumClone eventType, string playerProfileID)
+        public static void PatchPrefix(FlareEventType flareType, FlareShootZoneEvent.EZoneEventType eventType, string playerProfileID)
         {
             if (flareType != FlareEventType.ExitActivate)
             {
                 return;
             }
 
-            if (eventType != EZoneEventTypeEnumClone.FiredPlayerAddedInShotList && eventType != EZoneEventTypeEnumClone.PlayerByPartyAddedInShotList)
+            if (eventType != FlareShootZoneEvent.EZoneEventType.FiredPlayerAddedInShotList && eventType != FlareShootZoneEvent.EZoneEventType.PlayerByPartyAddedInShotList)
             {
                 return;
             }
@@ -42,19 +41,7 @@ namespace Terkoiz.FlareEventNotifier
                 return;
             }
 
-            NotificationManagerClass.DisplayNotification(new ExfilFlareSuccessNotification());
-        }
-
-        /// <summary>
-        /// Copy of the EZoneEventType enum so that a direct GClass reference could be avoided
-        /// </summary>
-        public enum EZoneEventTypeEnumClone
-        {
-            None,
-            PlayerEnteredZone,
-            PlayerExitedZone,
-            FiredPlayerAddedInShotList,
-            PlayerByPartyAddedInShotList
+            NotificationManager.DisplayNotification(new ExfilFlareSuccessNotification());
         }
 
         /// <summary>
@@ -73,7 +60,7 @@ namespace Terkoiz.FlareEventNotifier
         }
     }
 
-    public class ExfilFlareSuccessNotification : NotificationAbstractClass
+    public class ExfilFlareSuccessNotification : Notification
     {
         public ExfilFlareSuccessNotification()
         {
